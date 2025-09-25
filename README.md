@@ -1,0 +1,1 @@
+# stratio-rocket-customslitexd-examples
