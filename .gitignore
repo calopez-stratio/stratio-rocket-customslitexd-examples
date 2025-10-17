@@ -37,3 +37,6 @@ build/
 ### scripts ###
 *.bat
 *.sh
+
+### templates ###
+**template**

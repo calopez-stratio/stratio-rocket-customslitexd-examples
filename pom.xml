@@ -1,0 +1,209 @@
+<!--suppress ALL -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.stratio.sparta</groupId>
+    <artifactId>stratio-rocket-customslitexd-examples</artifactId>
+    <version>${revision}</version>
+    <name>${project.artifactId}</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <revision>1.0-DEFAULT</revision>
+
+        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.surfire.plugin.version>3.2.2</maven.surfire.plugin.version>
+        <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
+
+        <scala.binary.version>2.12</scala.binary.version>
+        <scala.maven.plugin.version>4.8.0</scala.maven.plugin.version>
+
+        <stratio.crossdata.version>3.8.4-50d44fc</stratio.crossdata.version>
+        <stratio.rocket.sdk.version>3.3.10-2b940f4</stratio.rocket.sdk.version>
+		
+		<apache.spark.version>3.1.1</apache.spark.version>
+		
+		<hadoop.version>3.2.0</hadoop.version>
+        <guava.version>27.0-jre</guava.version>
+        <akka.version>2.5.31</akka.version>
+    </properties>
+
+    <dependencies>
+         <!-- Stratio dependencies-->
+         <dependency>
+            <groupId>com.stratio.sparta</groupId>
+            <artifactId>sdk-lite-xd</artifactId>
+            <version>${stratio.rocket.sdk.version}</version>
+             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.slf4j</groupId>
+            		<artifactId>log4j-over-slf4j</artifactId>
+                	</exclusion>
+                	<exclusion>
+                		<groupId>org.apache.logging.log4j</groupId>
+                		<artifactId>log4j-slf4j-impl</artifactId>
+                	</exclusion>
+                	<exclusion>
+                		<groupId>com.typesafe.akka</groupId>
+                		<artifactId>*</artifactId>
+                	</exclusion>
+            </exclusions>
+        </dependency>
+         <dependency>
+            <groupId>com.stratio.crossdata</groupId>
+            <artifactId>crossdata-core_${scala.binary.version}</artifactId>
+            <version>${stratio.crossdata.version}</version>
+             <scope>provided</scope>
+            <exclusions>
+            	<exclusion>
+            		<groupId>org.slf4j</groupId>
+            		<artifactId>log4j-over-slf4j</artifactId>
+                	</exclusion>
+                	<exclusion>
+                		<groupId>org.apache.hadoop</groupId>
+                		<artifactId>*</artifactId>
+                	</exclusion>
+                	<exclusion>
+                		<groupId>com.google.guava</groupId>
+                		<artifactId>*</artifactId>
+                	</exclusion>
+            </exclusions>
+        </dependency>
+		
+		<!-- Spark dependencies-->
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_${scala.binary.version}</artifactId>
+            <version>${apache.spark.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-streaming_${scala.binary.version}</artifactId>
+            <version>${apache.spark.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_${scala.binary.version}</artifactId>
+            <version>${apache.spark.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+		
+        <!-- Others dependencies -->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-slf4j_2.12</artifactId>
+            <version>${akka.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.typesafe.akka</groupId>
+                    <artifactId>akka-actor_2.12</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>		
+    </dependencies>
+
+    <build>
+
+        <!-- Directories-->
+        <sourceDirectory>${project.basedir}/src/main/scala/</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/scala/</testSourceDirectory>
+
+        <plugins>
+            <!-- Plugin de scala para compilar-->
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>${scala.maven.plugin.version}</version>
+                <configuration>
+                    <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
+                    <recompileMode>incremental</recompileMode>
+                    <args>
+                        <arg>-g:vars</arg>
+                    </args>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+			
+            <!-- Surefire Plugin (solo deshabilitado para tests) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surfire.plugin.version}</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+
+            <!-- Plugin para adicionar dependencias al jar final que no tengan <scope>provided</scope> -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven.assembly.plugin.version}</version>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.stratio.sparta.FileReportOutputStep</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
