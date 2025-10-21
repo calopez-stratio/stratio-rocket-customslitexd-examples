@@ -21,12 +21,17 @@
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
 
         <scala.binary.version>2.12</scala.binary.version>
+        <scala.test.version>3.2.17</scala.test.version>
+        <scala.plugin.test.version>2.2.0</scala.plugin.test.version>
         <scala.maven.plugin.version>4.8.0</scala.maven.plugin.version>
 
         <stratio.crossdata.version>3.8.4-50d44fc</stratio.crossdata.version>
         <stratio.rocket.sdk.version>3.3.10-2b940f4</stratio.rocket.sdk.version>
 		
 		<apache.spark.version>3.1.1</apache.spark.version>
+        <holdenkarau.spark.test.version>${apache.spark.version}_1.1.1</holdenkarau.spark.test.version>
+
+        <slf4j.simple.version>2.0.7</slf4j.simple.version>
 		
 		<hadoop.version>3.2.0</hadoop.version>
         <guava.version>27.0-jre</guava.version>
@@ -107,6 +112,48 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- Test dependencies-->
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.binary.version}</artifactId>
+            <version>${scala.test.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.holdenkarau</groupId>
+            <artifactId>spark-testing-base_${scala.binary.version}</artifactId>
+            <version>${holdenkarau.spark.test.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-mapreduce-client-core</artifactId>
+            <version>${hadoop.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.simple.version}</version>
+            <scope>test</scope>
+        </dependency>
 		
         <!-- Others dependencies -->
         <dependency>
@@ -165,6 +212,27 @@
                         <goals>
                             <goal>compile</goal>
                             <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Plugin para ejecutar ScalaTest (AnyFunSuite) -->
+            <plugin>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest-maven-plugin</artifactId>
+                <version>${scala.plugin.test.version}</version>
+                <configuration>
+                    <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                    <noScalaTestIgnore>false</noScalaTestIgnore>
+                    <junitxml>.</junitxml>
+                    <filereports>WDF TestSuite.txt</filereports>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <goals>
+                            <goal>test</goal>
                         </goals>
                     </execution>
                 </executions>
