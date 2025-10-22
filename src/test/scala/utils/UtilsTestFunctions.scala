@@ -16,4 +16,12 @@ object UtilsTestFunctions {
     data
   }
 
+  def createDataTestEmpty(
+                           sparkSession: SparkSession
+                         ): DataFrame = {
+    import sparkSession.implicits._
+    val emptyData = Seq.empty[(Int, String, Double)]
+    emptyData.toDF("id", "name", "price")
+  }
+
 }

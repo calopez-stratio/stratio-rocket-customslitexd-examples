@@ -23,7 +23,7 @@ class TransformationExampleUdfsTest extends AnyFunSuite
   }
 
   test("Test OK ToUpperCaseUDF - Converting to uppercase") {
-    val udfInstance = ToUpperCaseUDF()
+    val udfInstance = new  ToUpperCaseUDF()
 
     val result = dataTest.withColumn("uppercased", udfInstance.userDefinedFunction(col("name")))
       .collect()
@@ -36,7 +36,7 @@ class TransformationExampleUdfsTest extends AnyFunSuite
   }
 
   test("Test OK ConcatUDF - Concatened columns") {
-    val udfInstance = ConcatUDF()
+    val udfInstance = new ConcatUDF()
 
     val result = dataTest.withColumn(
       "columnConcatened",

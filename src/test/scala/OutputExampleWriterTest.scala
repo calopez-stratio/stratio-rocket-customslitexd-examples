@@ -1,6 +1,7 @@
 import com.holdenkarau.spark.testing.{DataFrameSuiteBase, SharedSparkContext}
+import com.stratio.functions.WritingFunctions
 import com.stratio.sparta.OutputExampleWriter
-import com.stratio.sparta.sdk.lite.common.models.{OutputOptions, Overwrite}
+import com.stratio.sparta.sdk.lite.common.models.{ErrorIfExists, OutputOptions, Overwrite}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.crossdata.XDSession
 import org.junit.Assert.assertEquals
@@ -17,6 +18,7 @@ class OutputExampleWriterTest extends AnyFunSuite
   var xdSession: XDSession = _
   var testBaseDir: String = _
   var dataTest: DataFrame = _
+  var dataTestEmpty: DataFrame = _
   var outputOptions: OutputOptions = _
   var outputExampleWriter: OutputExampleWriter = _
 
@@ -38,7 +40,9 @@ class OutputExampleWriterTest extends AnyFunSuite
       xdBuilder.config(key, value)
     }
     xdSession = xdBuilder.create("test-user")
-    dataTest = UtilsTestFunctions.createDataTest(xdSession.asSparkSession)
+    val sparkSession = xdSession.asSparkSession
+    dataTest = UtilsTestFunctions.createDataTest(sparkSession)
+    dataTestEmpty = UtilsTestFunctions.createDataTestEmpty(sparkSession)
   }
 
   override def afterAll(): Unit = {
@@ -107,7 +111,7 @@ class OutputExampleWriterTest extends AnyFunSuite
 
   test("Test OK OutputExampleWriter - with out required property 'path' ") {
     outputOptions = OutputOptions(
-      saveMode = Overwrite,
+      saveMode = ErrorIfExists,
       tableName = Some("testFileOutputStep"),
       primaryKey = None,
       partitionBy = Seq.empty,
@@ -120,6 +124,19 @@ class OutputExampleWriterTest extends AnyFunSuite
     }
 
     assertEquals("Required property 'path' not found", exception.getMessage)
+  }
+
+  test("Test OK FileOutputStep functions save deprecate") {
+    val properties = Map.empty[String, String]
+    noException should be thrownBy {
+      outputExampleWriter.save(dataTestEmpty, "overwrite", properties)
+    }
+  }
+
+  test("Test OK WritingFunctions - with default values") {
+    val writingFunctions = new WritingFunctions()
+
+    writingFunctions.writeDataToParquet(dataTest, path = s"$testBaseDir/testWritingFunctionsFile")
   }
 
 }

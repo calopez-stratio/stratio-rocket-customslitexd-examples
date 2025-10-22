@@ -1,7 +1,7 @@
 <!--suppress ALL -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.sparta</groupId>
@@ -27,61 +27,71 @@
 
         <stratio.crossdata.version>3.8.4-50d44fc</stratio.crossdata.version>
         <stratio.rocket.sdk.version>3.3.10-2b940f4</stratio.rocket.sdk.version>
-		
-		<apache.spark.version>3.1.1</apache.spark.version>
+
+        <apache.spark.version>3.1.1</apache.spark.version>
         <holdenkarau.spark.test.version>${apache.spark.version}_1.1.1</holdenkarau.spark.test.version>
 
         <slf4j.simple.version>2.0.7</slf4j.simple.version>
-		
-		<hadoop.version>3.2.0</hadoop.version>
+
+        <hadoop.version>3.2.0</hadoop.version>
         <guava.version>27.0-jre</guava.version>
         <akka.version>2.5.31</akka.version>
+
+        <jacoco.version>0.8.10</jacoco.version>
+        <sonar.plugin.version>5.1.0.4751</sonar.plugin.version>
+        <sonar.junit.reportsPath>target/surefire-reports</sonar.junit.reportsPath>
+        <sonar.exclusions>
+            src/test/scala/**Test*.scala,
+            src/main/scala/com/stratio/utils/**Params*.scala
+        </sonar.exclusions>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+
     </properties>
 
     <dependencies>
-         <!-- Stratio dependencies-->
-         <dependency>
+        <!-- Stratio dependencies-->
+        <dependency>
             <groupId>com.stratio.sparta</groupId>
             <artifactId>sdk-lite-xd</artifactId>
             <version>${stratio.rocket.sdk.version}</version>
-             <scope>provided</scope>
+            <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>org.slf4j</groupId>
-            		<artifactId>log4j-over-slf4j</artifactId>
-                	</exclusion>
-                	<exclusion>
-                		<groupId>org.apache.logging.log4j</groupId>
-                		<artifactId>log4j-slf4j-impl</artifactId>
-                	</exclusion>
-                	<exclusion>
-                		<groupId>com.typesafe.akka</groupId>
-                		<artifactId>*</artifactId>
-                	</exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>log4j-over-slf4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.typesafe.akka</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>com.stratio.crossdata</groupId>
             <artifactId>crossdata-core_${scala.binary.version}</artifactId>
             <version>${stratio.crossdata.version}</version>
-             <scope>provided</scope>
+            <scope>provided</scope>
             <exclusions>
-            	<exclusion>
-            		<groupId>org.slf4j</groupId>
-            		<artifactId>log4j-over-slf4j</artifactId>
-                	</exclusion>
-                	<exclusion>
-                		<groupId>org.apache.hadoop</groupId>
-                		<artifactId>*</artifactId>
-                	</exclusion>
-                	<exclusion>
-                		<groupId>com.google.guava</groupId>
-                		<artifactId>*</artifactId>
-                	</exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>log4j-over-slf4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
-		
-		<!-- Spark dependencies-->
+
+        <!-- Spark dependencies-->
         <dependency>
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_${scala.binary.version}</artifactId>
@@ -154,7 +164,7 @@
             <version>${slf4j.simple.version}</version>
             <scope>test</scope>
         </dependency>
-		
+
         <!-- Others dependencies -->
         <dependency>
             <groupId>org.apache.hadoop</groupId>
@@ -185,7 +195,7 @@
                     <artifactId>akka-actor_2.12</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>		
+        </dependency>
     </dependencies>
 
     <build>
@@ -237,7 +247,7 @@
                     </execution>
                 </executions>
             </plugin>
-			
+
             <!-- Surefire Plugin (solo deshabilitado para tests) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -272,6 +282,29 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!--plugin para crear el reporte de cobertura de codigo-->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--plugin sonar (siempre debe ser el mas actual)-->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar.plugin.version}</version>
+            </plugin>
+
         </plugins>
     </build>
 </project>
